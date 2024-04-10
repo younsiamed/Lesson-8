@@ -22,6 +22,11 @@ protected:
     std::vector<double> angles;
 };
 
+class FigureCreationError : public std::domain_error {
+public:
+    FigureCreationError(const std::string& msg) : std::domain_error(msg) {}
+};
+
 class Triangle : public Figure {
 public:
     Triangle(double a, double b, double c, double A, double B, double C) : Figure("Треугольник") {
@@ -32,7 +37,52 @@ public:
                 << "; углы A=" << A << ", B=" << B << ", C=" << C << ") создан" << std::endl;
         }
         else {
-            throw std::domain_error("Ошибка создания фигуры. Причина: неверные параметры");
+            throw FigureCreationError("Причина: неверные параметры");
+        }
+    }
+};
+
+class RightTriangle : public Figure {
+public:
+    RightTriangle(double a, double b, double c, double A, double B, double C) : Figure("Прямоугольный треугольник") {
+        if ((A + B + C == 180) && (C != 90)) {
+            sides = { a, b, c };
+            angles = { A, B, C };
+            std::cout << "Прямоугольный треугольник (стороны a=" << a << ", b=" << b << ", c=" << c
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ") создан" << std::endl;
+        }
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
+        }
+    }
+};
+
+class IsoscelesTriangle : public Figure {
+public:
+    IsoscelesTriangle(double a, double b, double c, double A, double B, double C) : Figure("Равнобедренный треугольник") {
+        if ((A + B + C == 180) && (a == c)) {
+            sides = { a, b, c };
+            angles = { A, B, C };
+            std::cout << "Равнобедренный треугольник (стороны a=" << a << ", b=" << b << ", c=" << c
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ") создан" << std::endl;
+        }
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
+        }
+    }
+};
+
+class EquilateralTriangle : public Figure {
+public:
+    EquilateralTriangle(double a, double b, double c, double A, double B, double C) : Figure("Равносторонний треугольник") {
+        if ((A + B + C == 180) && (a == b && b == c) && (A == B && B == C)) {
+            sides = { a, b, c };
+            angles = { A, B, C };
+            std::cout << "Равносторонний треугольник (стороны a=" << a << ", b=" << b << ", c=" << c
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ") создан" << std::endl;
+        }
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
         }
     }
 };
@@ -40,106 +90,133 @@ public:
 class Quadrilateral : public Figure {
 public:
     Quadrilateral(double a, double b, double c, double d, double A, double B, double C, double D) : Figure("Четырёхугольник") {
-        if (A + B + C + D != 360) {
+        if (A + B + C + D == 360) {
             sides = { a, b, c, d };
             angles = { A, B, C, D };
             std::cout << "Четырёхугольник (стороны a=" << a << ", b=" << b << ", c=" << c << ", d=" << d
                 << "; углы A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ") создан" << std::endl;
         }
         else {
-            throw std::domain_error("Ошибка создания фигуры. Причина: неверные параметры");
+            throw FigureCreationError("Причина: неверные параметры");
         }
     }
 };
 
-class RightTriangle : public Triangle {
+class Rectangl : public Figure {
 public:
-    RightTriangle(double a, double b, double c) : Triangle(a, b, c, 45, 45, 90) {
-        name = "Прямоугольный треугольник";
-    }
-};
-
-class IsoscelesTriangle : public Triangle {
-public:
-    IsoscelesTriangle(double a, double b, double c) : Triangle(a, b, c, 60, 60, 60) {
-        if (a != c) {
-            name = "Равнобедренный треугольник";
+    Rectangl(double a, double b, double c, double d, double A, double B, double C, double D) : Figure("Прямоугольник") {
+        if ((A == 90 && B == 90 && C == 90 && D == 90) && ((a == c) && (b == d))) {
+            sides = { a, b, c, d };
+            angles = { A, B, C, D };
+            std::cout << "Прямоугольник (стороны a=" << a << ", b=" << b << ", c=" << c << ", d=" << d
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ") создан" << std::endl;
         }
         else {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у равнобедренного треугольника должны быть равны стороны a и c");
+            throw FigureCreationError("Причина: неверные параметры");
         }
     }
 };
 
-class EquilateralTriangle : public Triangle {
+class Square : public Figure {
 public:
-    EquilateralTriangle(double a) : Triangle(a, a, a, 60, 60, 60) {
-        if (a != sides[1] || a != sides[2] || angles[0] != 60 || angles[1] != 60 || angles[2] != 60) {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у равностороннего треугольника должны быть равны все стороны и все углы равны 60");
+    Square(double a, double b, double c, double d, double A, double B, double C, double D) : Figure("Квадрат") {
+        if (A + B + C + D == 360 || a == b == c == d) {
+            sides = { a, b, c, d };
+            angles = { A, B, C, D };
+            std::cout << "Квадрат (стороны a=" << a << ", b=" << b << ", c=" << c << ", d=" << d
+            << "; углы A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ") создан" << std::endl;
         }
-        name = "Равносторонний треугольник";
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
+        }
     }
 };
 
-class Rectangl : public Quadrilateral {
+class Parallelogram : public Figure {
 public:
-    Rectangl(double a, double b) : Quadrilateral(a, b, a, b, 90, 90, 90, 90) {
-        if (a != sides[0] || a != sides[2] || b != sides[1] || b != sides[3] ||
-            angles[0] != 90 || angles[1] != 90 || angles[2] != 90 || angles[3] != 90) {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у прямоугольника должны быть равны стороны a и c, стороны b и d, и все углы должны быть равны 90");
+    Parallelogram(double a, double b, double c, double d, double A, double B, double C, double D) : Figure("Параллелограмм") {
+        if (a == c || b == d || B == C || A + C == 180) {
+            sides = { a, b, c, d };
+            angles = { A, B, C, D };
+            std::cout << "Параллелограмм (стороны a=" << a << ", b=" << b << ", c=" << c << ", d=" << d
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ") создан" << std::endl;
         }
-        name = "Прямоугольник";
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
+        }
     }
 };
 
-class Square : public Quadrilateral {
+class Rhombus : public Figure {
 public:
-    Square(double a) : Quadrilateral(a, a, a, a, 90, 90, 90, 90) {
-        if (a != sides[0] || a != sides[2] || a != sides[1] || a != sides[3] ||
-            angles[0] != 90 || angles[1] != 90 || angles[2] != 90 || angles[3] != 90) {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у квадрата все стороны должны быть равны, и все углы должны быть равны 90");
+    Rhombus(double a, double b, double c, double d, double A, double B, double C, double D) : Figure("Ромб") {
+        if (a == b && b == c && c == d && A == B && B == C && C == D && A + B + C + D == 360) {
+            sides = { a, b, c, d };
+            angles = { A, B, C, D };
+            std::cout << "Ромб (стороны a=" << a << ", b=" << b << ", c=" << c << ", d=" << d
+                << "; углы A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ") создан" << std::endl;
         }
-        name = "Квадрат";
-    }
-};
-
-class Parallelogram : public Quadrilateral {
-public:
-    Parallelogram(double a, double b, double A) : Quadrilateral(a, b, a, b, A, 180 - A, A, 180 - A) {
-        if (a != sides[0] || a != sides[2] || b != sides[1] || b != sides[3] ||
-            angles[0] != A || angles[1] != (180 - A) || angles[2] != A || angles[3] != (180 - A)) {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у параллелограмма должны быть равны стороны a и c, стороны b и d, углы A и C, углы B и D");
+        else {
+            throw FigureCreationError("Причина: неверные параметры");
         }
-        name = "Параллелограмм";
-    }
-};
-
-class Rhombus : public Quadrilateral {
-public:
-    Rhombus(double a, double A) : Quadrilateral(a, a, a, a, A, 180 - A, A, 180 - A) {
-        if (a != sides[0] || a != sides[2] || a != sides[1] || a != sides[3] ||
-            angles[0] != A || angles[1] != (180 - A) || angles[2] != A || angles[3] != (180 - A)) {
-            throw std::domain_error("Ошибка создания фигуры. Причина: у ромба должны быть равны все стороны и углы A и C, углы B и D");
-        }
-        name = "Ромб";
     }
 };
 
 int main() {
     SetConsoleOutputCP(65001);
     try {
-        Triangle triangle(10, 10, 10, 60, 60, 60);
-        Quadrilateral quadrilateral(10, 20, 30, 40, 50, 60, 70, 80);
-        RightTriangle rightTriangle(10, 20, 30);
-        IsoscelesTriangle isoscelesTriangle(10, 20, 10);
-        EquilateralTriangle equilateralTriangle(30);
-        Rectangl rectangle(10, 20);
-        Square square(20);
-        Parallelogram parallelogram(20, 30, 30);
-        Rhombus rhombus(30, 30);
+        Triangle triangle(30, 30, 30, 60, 60, 60);
     }
-    catch (const std::domain_error& e) {
-        std::cerr << "Исключение: " << e.what() << std::endl;
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Треугольник. " << e.what() << std::endl;
+    }
+    try {
+        RightTriangle rightTriangle(5, 13, 12, 60, 30, 90);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Прямоугольный треугольник. " << e.what() << std::endl;
+    }
+    try {
+        IsoscelesTriangle isoscelesTriangle(20, 20, 20, 60, 60, 60);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Равнобедренный треугольник. " << e.what() << std::endl;
+    }
+    try {
+        EquilateralTriangle equilateralTriangle(30, 30, 30, 60, 60, 60);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Равносторонний треугольник. " << e.what() << std::endl;
+    }
+    try {
+        Quadrilateral quadrilateral(20, 20, 20, 20, 90, 90, 90, 90);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Четырёхугольник. " << e.what() << std::endl;
+    }
+    try {
+        Rectangl rectangle(10, 20, 10, 20, 90, 90, 90, 90);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Прямоугольник. " << e.what() << std::endl;
+    }
+    try {
+        Square square(20, 20, 20, 20, 90, 90, 90, 90);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Квадрат. " << e.what() << std::endl;
+    }
+    try {
+        Parallelogram parallelogram(30, 20, 30, 20, 100, 80, 100, 80);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Параллелограмм. " << e.what() << std::endl;
+    }
+    try {
+        Rhombus rhombus(30, 30, 30, 30, 90, 90, 90, 90);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Ошибка создания Ромб. " << e.what() << std::endl;
     }
     return 0;
 }
